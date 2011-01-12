@@ -4,12 +4,15 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Hudson;
 import hudson.model.FreeStyleBuild;
 import hudson.model.Label;
+import hudson.scm.NullSCM;
 import hudson.slaves.DumbSlave;
 import hudson.tasks.Shell;
 import hudson.tasks.BatchFile;
 import hudson.model.Result;
 import hudson.plugins.cppncss.CppNCSSPublisher;
+import hudson.plugins.cppncss.parser.Statistic;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -41,6 +44,67 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
         assertBuildStatusSuccess(build2);
 
     }
+    
+    public void testOnMasterPreviousBuildFailedWithoutCPPNCSSReportButCurrentBuildShouldWork() throws Exception {
+        FreeStyleProject project = createFreeStyleProject();
+
+        List<SingleFileSCM> files = new ArrayList<SingleFileSCM>(2);
+	
+        files.add(new SingleFileSCM("cppncss-reports/first-report/first-report-cppncss.xml",
+                                    getClass().getResource("cppncss-reports/first-report/first-report-cppncss.xml")));
+        files.add(new SingleFileSCM("cppncss-reports/second-report/second-report-cppncss.xml",
+                                    getClass().getResource("cppncss-reports/second-report/second-report-cppncss.xml")));
+        
+        project.setScm(new MultiFileSCM(files));
+	
+        CppNCSSHealthTarget targets[] = new CppNCSSHealthTarget[1];
+        targets[0] = new CppNCSSHealthTarget(CppNCSSHealthMetrics.NUMBER_OF_CCN_VIOLATED_FUNCTION, "3.0", "3.0", "4.0", "6.0", "1.0");
+        CppNCSSPublisher cppNCSSPublisher = new CppNCSSPublisher("**/*-cppncss.xml", 3, 100,  targets);
+        project.getPublishersList().add(cppNCSSPublisher);
+        
+        //success build
+        FreeStyleBuild build1 = project.scheduleBuild2(0).get();
+        CppNCSSBuildIndividualReport action =(CppNCSSBuildIndividualReport) build1.getAction(AbstractBuildReport.class);
+        
+        Collection<Statistic> functionResults = action.getResults().getFunctionResults();
+    	int ccnViolatedFunctions = 0;
+    	
+    	for (Statistic statistic : functionResults) {
+			if(statistic.getCcn() > 3)
+				ccnViolatedFunctions ++;
+		}
+    	
+        assertEquals(5, ccnViolatedFunctions);
+        
+        //failed build and no result file
+        project.setScm(new NullSCM());
+        project.getWorkspace().deleteRecursive();
+        project.getBuildersList().add(new Shell("exit 1"));
+        FreeStyleBuild build2 = project.scheduleBuild2(0).get();
+        action =(CppNCSSBuildIndividualReport) build2.getAction(AbstractBuildReport.class);
+        assertNull( action);
+        
+        //success again. should work
+        project.setScm(new MultiFileSCM(files));
+        project.getBuildersList().removeAll(Shell.class);
+        FreeStyleBuild build3 = project.scheduleBuild2(0).get();
+        
+        action =(CppNCSSBuildIndividualReport) build3.getAction(AbstractBuildReport.class);
+        functionResults = action.getResults().getFunctionResults();
+    	ccnViolatedFunctions = 0;
+    	
+    	for (Statistic statistic : functionResults) {
+			if(statistic.getCcn() > 3)
+				ccnViolatedFunctions ++;
+		}
+    	
+        assertEquals(5, ccnViolatedFunctions);
+        System.out.println(build3.getLog());
+        
+        assertBuildStatusSuccess(build3);
+
+    }
+    
 
     /**
      * Verify that it works on a slave.

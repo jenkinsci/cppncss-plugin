@@ -54,8 +54,6 @@ public class CppNCSSProjectFunctionIndividualReport extends
 
 	@Override
 	public String getDisplayName() {
-//		return fileName.substring(fileName.lastIndexOf("/")).substring(
-//				fileName.lastIndexOf("\\"));
 		return fileName;
 	}
 }

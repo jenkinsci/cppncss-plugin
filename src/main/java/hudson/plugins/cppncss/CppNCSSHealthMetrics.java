@@ -125,12 +125,28 @@ public enum CppNCSSHealthMetrics implements HealthMetric<CppNCSSBuildIndividualR
     static float measureNew(CppNCSSHealthMetrics metrics, CppNCSSBuildIndividualReport observable) {
 		final float newValue = metrics.measure(observable);
 		final float oldValue;
-		AbstractBuild<?, ?> previousBuild = (AbstractBuild<?, ?>)observable.getBuild().getPreviousBuild();
-		if(previousBuild != null){
-			CppNCSSBuildIndividualReport action = (CppNCSSBuildIndividualReport)previousBuild.getAction(AbstractBuildReport.class);
-			oldValue = metrics.measure(action);
+		AbstractBuild<?, ?> currentBuild = (AbstractBuild<?, ?>)observable.getBuild();
+		CppNCSSBuildIndividualReport previousReport = getPreviousCppNCSSReport(currentBuild);
+		
+		if(previousReport != null){
+			oldValue = metrics.measure(previousReport);
 			return newValue - oldValue;
 		}
-		return 0;
+		return newValue;
+		
 	};
+	
+	private static CppNCSSBuildIndividualReport getPreviousCppNCSSReport(AbstractBuild<?, ?> build){
+		AbstractBuild<?, ?> previousBuild = build.getPreviousBuild();
+		CppNCSSBuildIndividualReport resultReport = null;
+		while(previousBuild != null && resultReport == null){
+			CppNCSSBuildIndividualReport action = (CppNCSSBuildIndividualReport)previousBuild.getAction(AbstractBuildReport.class);
+			previousBuild = previousBuild.getPreviousBuild();
+			if(action != null){
+				resultReport = action;
+				break;
+			}
+		}
+		return resultReport;
+	}
 }
