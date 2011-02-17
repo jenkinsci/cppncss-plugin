@@ -1,5 +1,6 @@
 package hudson.plugins.cppncss;
 
+import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
@@ -7,6 +8,7 @@ import hudson.plugins.helpers.AbstractPublisherImpl;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.plugins.helpers.health.HealthMetric;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import net.sf.json.JSONObject;
 
@@ -60,15 +62,6 @@ public class CppNCSSPublisher extends AbstractPublisherImpl {
         return false;
     }
 
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-    /**
-     * {@inheritDoc}
-     */
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -76,18 +69,16 @@ public class CppNCSSPublisher extends AbstractPublisherImpl {
         return new CppNCSSProjectIndividualReport(project, functionCcnViolationThreshold, functionNcssViolationThreshold);
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
+
     protected Ghostwriter newGhostwriter() {
         return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, targets);
     }
 
+    @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-
-        /**
-         * Do not instantiate DescriptorImpl.
-         */
-        private DescriptorImpl() {
-            super(CppNCSSPublisher.class);
-        }
 
         /**
          * {@inheritDoc}

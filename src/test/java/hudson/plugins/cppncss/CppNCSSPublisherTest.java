@@ -1,14 +1,11 @@
 package hudson.plugins.cppncss;
 
 import hudson.model.FreeStyleProject;
-import hudson.model.Hudson;
 import hudson.model.FreeStyleBuild;
 import hudson.model.Label;
 import hudson.scm.NullSCM;
 import hudson.slaves.DumbSlave;
 import hudson.tasks.Shell;
-import hudson.tasks.BatchFile;
-import hudson.model.Result;
 import hudson.plugins.cppncss.CppNCSSPublisher;
 import hudson.plugins.cppncss.parser.Statistic;
 
@@ -40,9 +37,8 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
         FreeStyleBuild build1 = project.scheduleBuild2(0).get();
 	
         FreeStyleBuild build2 = project.scheduleBuild2(0).get();
-        System.out.println(build2.getLog());
+        System.out.println(getLog(build2));
         assertBuildStatusSuccess(build2);
-
     }
     
     public void testOnMasterPreviousBuildFailedWithoutCPPNCSSReportButCurrentBuildShouldWork() throws Exception {
@@ -78,7 +74,7 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
         
         //failed build and no result file
         project.setScm(new NullSCM());
-        project.getWorkspace().deleteRecursive();
+        project.getSomeWorkspace().deleteRecursive();
         project.getBuildersList().add(new Shell("exit 1"));
         FreeStyleBuild build2 = project.scheduleBuild2(0).get();
         action =(CppNCSSBuildIndividualReport) build2.getAction(AbstractBuildReport.class);
@@ -99,7 +95,7 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
 		}
     	
         assertEquals(5, ccnViolatedFunctions);
-        System.out.println(build3.getLog());
+        System.out.println(getLog(build3));
         
         assertBuildStatusSuccess(build3);
 
@@ -111,7 +107,7 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
      */
     public void testOnSlave() throws Exception {
         FreeStyleProject project = createFreeStyleProject();
-        DumbSlave slave = createSlave(new Label("cppncss-test-slave"));
+        DumbSlave slave = createSlave(Label.get("cppncss-test-slave"));
         
         project.setAssignedLabel(slave.getSelfLabel());
         List<SingleFileSCM> files = new ArrayList<SingleFileSCM>(2);
@@ -127,7 +123,7 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
         FreeStyleBuild build1 = project.scheduleBuild2(0).get();
 	
         FreeStyleBuild build2 = project.scheduleBuild2(0).get();
-        System.out.println(build2.getLog());
+        System.out.println(getLog(build2));
         assertBuildStatusSuccess(build2);
     }
 

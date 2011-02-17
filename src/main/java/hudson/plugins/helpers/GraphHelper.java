@@ -56,7 +56,7 @@ public class GraphHelper {
      * @return Value for property 'graphUnsupported'.
      */
     public static boolean isGraphUnsupported() {
-        return ChartUtil.awtProblem;
+        return ChartUtil.awtProblemCause != null;
     }
 
     public static void redirectWhenGraphUnsupported(StaplerResponse rsp, StaplerRequest req) throws IOException {
@@ -225,7 +225,7 @@ public class GraphHelper {
 		    categoryPlot.mapDatasetToRangeAxis(index,index);
 		    categoryPlot.mapDatasetToDomainAxis(index,0);
 		    CategoryItemRenderer rendu= new DefaultCategoryItemRenderer();        
-		    rendu.setPaint(color);
+		    rendu.setBasePaint(color);
 		    categoryPlot.setRenderer(index,rendu);
 	}
     

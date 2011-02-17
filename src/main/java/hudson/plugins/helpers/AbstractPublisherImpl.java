@@ -3,7 +3,7 @@ package hudson.plugins.helpers;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author Stephen Connolly
  * @since 28-Jan-2008 22:32:46
  */
-public abstract class AbstractPublisherImpl extends Publisher {
+public abstract class AbstractPublisherImpl extends Recorder {
 
     /**
      * Creates the configured Ghostwriter.
