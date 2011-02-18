@@ -10,7 +10,7 @@
 
     <artifactId>cppncss</artifactId>
     <packaging>hpi</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <name>Jenkins CppNCSS plugin</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/CPPNCSS+Plugin</url>
     <build>
@@ -43,4 +43,10 @@
       <email>shaohua-holy.wen@nsn.com</email>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:svn:https://svn.jenkins-ci.org/tags/cppncss-1.1</connection>
+    <developerConnection>scm:svn:https://svn.jenkins-ci.org/tags/cppncss-1.1</developerConnection>
+    <url>http://fisheye.jenkins-ci.org/browse/Hudson/tags/cppncss-1.1</url>
+  </scm>
 </project>
