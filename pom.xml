@@ -1,12 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>org.jvnet.hudson.plugins</groupId>
+        <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.358</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>2.2</version>
     </parent>
+
+    <properties>
+        <jenkins.version>1.532.3</jenkins.version>
+        <java.level>6</java.level>
+    </properties>
 
     <artifactId>cppncss</artifactId>
     <packaging>hpi</packaging>
@@ -14,35 +18,30 @@
     <name>Jenkins CppNCSS plugin</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/CPPNCSS+Plugin</url>
     <build>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>javancss-maven-plugin</artifactId>
-          <version>2.0-beta-2</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javancss-maven-plugin</artifactId>
+                <version>2.0-beta-2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
-    <dependencies>
-      <dependency>
-        <groupId>org.jvnet.hudson.main</groupId>
-        <artifactId>maven-plugin</artifactId>
-      </dependency>
-    </dependencies>
+
     <developers>
-    <developer>
-      <id>holywen</id>
-      <name>Shaohua Wen</name>
-      <email>shaohua-holy.wen@nsn.com</email>
-    </developer>
-  </developers>
+        <developer>
+            <id>holywen</id>
+            <name>Shaohua Wen</name>
+            <email>shaohua-holy.wen@nsn.com</email>
+        </developer>
+    </developers>
 
     <repositories>
         <repository>
