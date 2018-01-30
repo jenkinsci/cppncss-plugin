@@ -1,7 +1,6 @@
 package hudson.plugins.helpers;
 
 import hudson.model.BuildListener;
-import hudson.remoting.Callable;
 import jenkins.security.MasterToSlaveCallable;
 
 import java.io.IOException;

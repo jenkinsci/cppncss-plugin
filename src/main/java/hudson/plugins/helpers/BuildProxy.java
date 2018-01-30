@@ -56,6 +56,7 @@ public final class BuildProxy implements Serializable {
             // construct the BuildProxy instance that we will use
 
             BuildProxy buildProxy = new BuildProxy(
+                    //TODO: It is not compatible with custom artifact managers
                     new FilePath(build.getArtifactsDir()),
                     new FilePath(build.getProject().getRootDir()),
                     new FilePath(build.getRootDir()),
@@ -86,6 +87,7 @@ public final class BuildProxy implements Serializable {
                 || masterGhostwriter.performFromMaster(build, build.getModuleRoot(), listener);
     }
 
+    //TODO: this logic undermines error propagation in the code
     /**
      * Takes a remote exception that has been wrapped up in the remoting layer, and rethrows it as IOException,
      * InterruptedException or if all else fails, a RuntimeException.
@@ -100,15 +102,19 @@ public final class BuildProxy implements Serializable {
     private static RuntimeException unwrapException(Exception e,
                                                     BuildListener listener)
             throws IOException, InterruptedException {
+
         if (e.getCause() instanceof IOException) {
-            throw new IOException2(e.getCause().getMessage(), e);
+            throw new IOException(e.getCause().getMessage(), e);
         }
         if (e.getCause() instanceof InterruptedException) {
             e.getCause().printStackTrace(listener.getLogger());
             throw new InterruptedException(e.getCause().getMessage());
         }
         if (e.getCause() instanceof RuntimeException) {
-            throw new RuntimeException(e.getCause());
+            RuntimeException ex = new RuntimeException(e.getCause());
+            // It is required to triage JEP-200 security exceptions
+            ex.addSuppressed(e);
+            throw ex;
         }
         // How on earth do we get this far down the branch
         e.printStackTrace(listener.getLogger());
