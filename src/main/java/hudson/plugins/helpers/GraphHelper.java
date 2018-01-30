@@ -27,6 +27,8 @@ import org.jfree.ui.RectangleInsets;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import javax.annotation.CheckForNull;
+
 /**
  * TODO javadoc.
  *
@@ -65,7 +67,7 @@ public class GraphHelper {
         rsp.sendRedirect2(req.getContextPath() + "/images/headless.png");
     }
 
-    public static JFreeChart buildChart(final AbstractBuild<?, ?> build, final Integer functionCcnViolationThreshold, final Integer functionNcssViolationThreshold) {
+    public static JFreeChart buildChart(final AbstractBuild<?, ?> build, final @CheckForNull Integer functionCcnViolationThreshold, final @CheckForNull Integer functionNcssViolationThreshold) {
     	
         final JFreeChart chart = ChartFactory.createStackedAreaChart(
                 null,                     // chart title
@@ -176,9 +178,10 @@ public class GraphHelper {
 					public long getCollectedNumber(AbstractBuildReport action) {
 						Collection<Statistic> functionResults = action.getResults().getFunctionResults();
 						int ccnViolatedFunctions = 0;
-		            	
+
+						int threshold = functionCcnViolationThreshold != null ? functionCcnViolationThreshold.intValue() : 0;
 		            	for (Statistic statistic : functionResults) {
-							if(statistic.getCcn() > functionCcnViolationThreshold.intValue())
+							if(statistic.getCcn() > threshold)
 								ccnViolatedFunctions ++;
 						}
 						return ccnViolatedFunctions;
@@ -200,9 +203,10 @@ public class GraphHelper {
 					public long getCollectedNumber(AbstractBuildReport action) {
 						Collection<Statistic> functionResults = action.getResults().getFunctionResults();
 		            	int ncssViolatedFunctions = 0;
-		            	
+
+						int threshold = functionNcssViolationThreshold != null ? functionNcssViolationThreshold.intValue() : 0;
 		            	for (Statistic statistic : functionResults) {
-							if(statistic.getNcss() > functionNcssViolationThreshold.intValue())
+							if(statistic.getNcss() > threshold)
 								ncssViolatedFunctions ++;
 						}
 						return ncssViolatedFunctions;
