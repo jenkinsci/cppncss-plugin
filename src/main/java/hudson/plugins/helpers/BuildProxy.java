@@ -25,9 +25,12 @@ public final class BuildProxy implements Serializable {
     private final FilePath projectRootDir;
     private final FilePath buildRootDir;
     private final FilePath executionRootDir;
+    // It should not be serialized over the channel (JENKINS-49237)
     private final Calendar timestamp;
+    // TODO: it should not be serialized over the channel. It should exist only on the master side
     private final List<AbstractBuildAction<AbstractBuild<?, ?>>> actions =
             new ArrayList<AbstractBuildAction<AbstractBuild<?, ?>>>();
+    //TODO: This class should not be serialized as well?
     private Result result = null;
     private boolean continueBuild = true;
 

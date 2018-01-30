@@ -1,0 +1,12 @@
+# TODO: not mergeable in the current state. JENKINS-49237
+# Calendar class implementation has a custom deserialization logic
+# ZoneInfo deserialization happens in the privileged mode...
+java.util.Calendar
+java.util.GregorianCalendar
+java.util.SimpleTimeZone
+sun.util.BuddhistCalendar
+java.util.JapaneseImperialCalendar
+
+java.util.TimeZone
+java.util.SimpleTimeZone
+sun.util.calendar.ZoneInfo
