@@ -3,8 +3,10 @@ package hudson.plugins.helpers;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReportingAction;
+import hudson.model.Run;
 import hudson.plugins.cppncss.parser.StatisticSummary;
 import hudson.plugins.cppncss.parser.StringStatisticSummary;
+import jenkins.model.RunAction2;
 
 import java.io.Serializable;
 
@@ -16,7 +18,7 @@ import java.io.Serializable;
  * @since 04-Feb-2008 19:41:25
  */
 public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>> 
-	implements HealthReportingAction, Serializable 
+	implements HealthReportingAction, Serializable, RunAction2
 {
     /** Unique identifier for this class. */
     private static final long serialVersionUID = 31415926L;
@@ -25,7 +27,7 @@ public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>>
      * The owner of this Action.  Ideally I'd like this to be final and set in the constructor, but Maven does not
      * let us do that, so we need a setter.
      */
-    private BUILD build = null;
+    private transient BUILD build = null;
 
     /**
      * Constructs a new AbstractBuildAction.
@@ -52,6 +54,26 @@ public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>>
         if (this.build == null && this.build != build) {
             this.build = build;
         }
+    }
+
+    private BUILD runToBuild(Run<?, ?> run) throws IllegalStateException {
+        final BUILD b;
+        try {
+            b = (BUILD)run;
+        } catch (ClassCastException ex) {
+            throw new IllegalStateException("Action is attached to a wrong job type for run " + run.getFullDisplayName(), ex);
+        }
+        return b;
+    }
+
+    @Override
+    public final void onAttached(Run<?, ?> r) {
+        setBuild(runToBuild(r));
+    }
+
+    @Override
+    public final void onLoad(Run<?, ?> r) {
+        setBuild(runToBuild(r));
     }
 
     /**

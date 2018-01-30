@@ -1,11 +1,13 @@
 package hudson.plugins.cppncss.parser;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractBuild;
 import hudson.util.IOException2;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import javax.annotation.CheckForNull;
 import java.io.*;
 import java.util.*;
 
@@ -16,10 +18,16 @@ import java.util.*;
  * @author Shaohua Wen
  * @since 25-Feb-2008 21:33:40
  */
+@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Not used in XStream")
 public class Statistic implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    private AbstractBuild<?, ?> owner;
+    /**
+     * @deprecated this field should not be used
+     */
+    @CheckForNull
+    private transient AbstractBuild<?, ?> owner;
+
     private String name;
     private long functions;
     private long ncss;
@@ -302,6 +310,11 @@ public class Statistic implements Serializable {
         this.ncss = ncss;
     }
 
+    /**
+     * @deprecated this field is not really supposed to be used.
+     */
+    @Deprecated
+    @CheckForNull
 	public AbstractBuild<?, ?> getOwner() {
         return owner;
     }

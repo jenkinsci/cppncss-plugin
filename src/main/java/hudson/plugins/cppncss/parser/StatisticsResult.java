@@ -1,19 +1,27 @@
 package hudson.plugins.cppncss.parser;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractBuild;
 
+import javax.annotation.CheckForNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
+@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Not used in XStream")
 public class StatisticsResult  implements Serializable {
 
 	//cppncss function results
 	private Collection<Statistic> functionResults = Collections.emptySet();
 	//cppncss file results
 	private Collection<Statistic> fileResults = Collections.emptySet();
-	
-	private AbstractBuild<?, ?> owner;
+
+	/**
+	 * @deprecated this field should not be used
+	 */
+	@Deprecated
+	@CheckForNull
+	private transient AbstractBuild<?, ?> owner;
 
 	public void setFunctionResults(Collection<Statistic> functionResults) {
 		this.functionResults = functionResults;
@@ -51,6 +59,11 @@ public class StatisticsResult  implements Serializable {
 		 fileResults.clear();
 	}
 
+	/**
+	 * @deprecated  Should not be used.
+	 */
+	@Deprecated
+	@CheckForNull
 	public AbstractBuild<?, ?> getOwner() {
         return owner;
     }
