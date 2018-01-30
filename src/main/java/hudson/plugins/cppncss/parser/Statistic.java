@@ -85,6 +85,9 @@ public class Statistic implements Serializable {
                              lastTag = null;
                              lastText = null;
                              break;
+                         default:
+                             // Do nothing
+                             break;
             			}
                     }
             		Statistic s = new Statistic(data.get("name"));
@@ -93,8 +96,8 @@ public class Statistic implements Serializable {
             			String file = fileStr.substring(0,fileStr.lastIndexOf(":"));
             			s.setParentElement(file);
             		}
-            		s.setNcss(Long.valueOf(data.get(functionValueNames[1]).trim()));
-            		s.setCcn(Long.valueOf(data.get(functionValueNames[2]).trim()));
+            		s.setNcss(Long.parseLong(data.get(functionValueNames[1]).trim()));
+            		s.setCcn(Long.parseLong(data.get(functionValueNames[2]).trim()));
             		functionResults.add(s);
     			}
     			parser.next();
@@ -137,12 +140,15 @@ public class Statistic implements Serializable {
                              lastTag = null;
                              lastText = null;
                              break;
+                         default:
+                             // Do nothing
+                             break;
             			}
                     }
             		Statistic s = new Statistic(data.get("name"));
-            		s.setNcss(Long.valueOf(data.get(fileValueNames[1]).trim()));
-            		s.setCcn(Long.valueOf(data.get(fileValueNames[2]).trim()));
-            		s.setFunctions(Long.valueOf(data.get(fileValueNames[3]).trim()));
+            		s.setNcss(Long.parseLong(data.get(fileValueNames[1]).trim()));
+            		s.setCcn(Long.parseLong(data.get(fileValueNames[2]).trim()));
+            		s.setFunctions(Long.parseLong(data.get(fileValueNames[3]).trim()));
             		fileResults.add(s);
     			}
     			parser.next();

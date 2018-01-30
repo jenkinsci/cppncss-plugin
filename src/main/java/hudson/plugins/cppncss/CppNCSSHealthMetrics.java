@@ -8,6 +8,9 @@ import java.util.Collection;
 
 import org.apache.commons.beanutils.Converter;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
 /**
  * Created by IntelliJ IDEA. User: stephen Date: 18-Mar-2008 Time: 06:04:17 To change this template use File | Settings
  * | File Templates.
@@ -135,18 +138,17 @@ public enum CppNCSSHealthMetrics implements HealthMetric<CppNCSSBuildIndividualR
 		return newValue;
 		
 	};
-	
-	private static CppNCSSBuildIndividualReport getPreviousCppNCSSReport(AbstractBuild<?, ?> build){
+
+    @CheckForNull
+	private static CppNCSSBuildIndividualReport getPreviousCppNCSSReport(@Nonnull AbstractBuild<?, ?> build){
 		AbstractBuild<?, ?> previousBuild = build.getPreviousBuild();
-		CppNCSSBuildIndividualReport resultReport = null;
-		while(previousBuild != null && resultReport == null){
-			CppNCSSBuildIndividualReport action = (CppNCSSBuildIndividualReport)previousBuild.getAction(AbstractBuildReport.class);
-			previousBuild = previousBuild.getPreviousBuild();
-			if(action != null){
-				resultReport = action;
-				break;
-			}
+		while(previousBuild != null){
+		    AbstractBuildReport report = previousBuild.getAction(AbstractBuildReport.class);
+		    if (report instanceof CppNCSSBuildIndividualReport) {
+                return (CppNCSSBuildIndividualReport)report;
+            }
+            previousBuild = previousBuild.getPreviousBuild();
 		}
-		return resultReport;
+		return null;
 	}
 }

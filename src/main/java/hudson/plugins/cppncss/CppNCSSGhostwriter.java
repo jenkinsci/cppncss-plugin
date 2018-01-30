@@ -1,5 +1,6 @@
 package hudson.plugins.cppncss;
 
+import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
@@ -50,6 +51,11 @@ public class CppNCSSGhostwriter
     	if (targets != null && targets.length > 0) {
 	    	List<Action> actions = build.getActions();
 	    	Result buildResult = build.getResult();
+	    	if (buildResult == null) {
+	    	    // The entire method need to be modified to support Pipeline
+	    	    throw new AbortException("Cannot perform publisher for a running job. The plugin needs to be updated to support plugins like Any Build Step. File a JIRA ticket if you need that");
+            }
+
 	    	for (Action action : actions) {
 				if(action instanceof CppNCSSBuildIndividualReport) {
 					CppNCSSBuildIndividualReport cppncssAction = (CppNCSSBuildIndividualReport)action;

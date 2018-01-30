@@ -28,6 +28,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * TODO javadoc.
@@ -233,17 +234,20 @@ public class GraphHelper {
 		    rendu.setBasePaint(color);
 		    categoryPlot.setRenderer(index,rendu);
 	}
-    
-	private static CategoryDataset buildDataset(AbstractBuild<?, ?> build, DataCollector collector) {
+
+	@Nonnull
+	private static CategoryDataset buildDataset(@CheckForNull AbstractBuild<?, ?> build, @Nonnull DataCollector collector) {
     	DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
-    	
-    	for (AbstractBuild<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) { 
-        	ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel((Run<?, ?>) lastBuild);
-            AbstractBuildReport action = lastBuild.getAction(AbstractBuildReport.class);
-            if (action != null) {
-            	builder.add(collector.getCollectedNumber(action), collector.getTitle(), label);
-            }
-        }
+
+    	if (build != null) {
+			for (AbstractBuild<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) {
+				ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel((Run<?, ?>) lastBuild);
+				AbstractBuildReport action = lastBuild.getAction(AbstractBuildReport.class);
+				if (action != null) {
+					builder.add(collector.getCollectedNumber(action), collector.getTitle(), label);
+				}
+			}
+		}
         return builder.build();
 	}
 }

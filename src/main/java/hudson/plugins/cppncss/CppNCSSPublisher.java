@@ -1,5 +1,6 @@
 package hudson.plugins.cppncss;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -51,6 +52,8 @@ public class CppNCSSPublisher extends AbstractPublisherImpl {
 		return functionNcssViolationThreshold;
 	}
 
+	// TODO: replace by lists
+	@SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Legacy code, suppressed due to the performance reasons")
 	public CppNCSSHealthTarget[] getTargets() {
         return targets;
     }
@@ -88,6 +91,9 @@ public class CppNCSSPublisher extends AbstractPublisherImpl {
         }
 
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            if (req == null) {
+                throw new IllegalStateException("Request has not been passed to " + DescriptorImpl.class);
+            }
             ConvertUtils.register(CppNCSSHealthMetrics.CONVERTER, CppNCSSHealthMetrics.class);
             return req.bindJSON(CppNCSSPublisher.class, formData);
         }

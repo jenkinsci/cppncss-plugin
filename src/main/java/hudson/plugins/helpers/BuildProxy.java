@@ -139,7 +139,9 @@ public final class BuildProxy implements Serializable {
         }
 
         // update the result
-        if (result != null && result.isWorseThan(build.getResult())) {
+        // TODO: Logic needs to be updated to support Any Build Step and Pipeline jobs
+        Result currentResult = build.getResult();
+        if (result != null && currentResult != null && result.isWorseThan(currentResult)) {
             build.setResult(result);
         }
     }
