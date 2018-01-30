@@ -345,30 +345,34 @@ public class Statistic implements Serializable {
                 '}';
     }
 
+    /**
+     * @deprecated use {@link #getStatisticSummary()}
+     */
+    @Deprecated
     public String toSummary() {
-        return "<ul>"
-                + diff(0, ccn, "ccn")
-                + diff(0, functions, "functions")
-                + diff(0, ncss, "ncss")
-                + "</ul>";
+        return getStatisticSummary().getHtmlSummary();
     }
 
-    private static String diff(long a, long b, String name) {
-        if (a == b) {
-            return "";
-        } else if (a < b) {
-            return "<li>" + name + " (+" + (b - a) + ")</li>";
-        } else { // if (a < b)
-            return "<li>" + name + " (-" + (a - b) + ")</li>";
-        }
+    /**
+     * @since TODO
+     */
+    public StatisticSummary getStatisticSummary() {
+        return new FormattedStatisticSummary(ccn, functions, ncss);
     }
 
+    /**
+     * @deprecated Use {@link #getStatisticSummary(Statistic)}
+     */
+    @Deprecated
     public String toSummary(Statistic totals) {
-        return "<ul>"
-                + diff(totals.ccn, ccn, "ccn")
-                + diff(totals.functions, functions, "functions")
-                + diff(totals.ncss, ncss, "ncss")
-                + "</ul>";
+        return getStatisticSummary(totals).getHtmlSummary();
+    }
+
+    /**
+     * @since TODO
+     */
+    public StatisticSummary getStatisticSummary(Statistic totals) {
+        return new FormattedStatisticSummary(totals, this);
     }
 
     public void set(Statistic that) {

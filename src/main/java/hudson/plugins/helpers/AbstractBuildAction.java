@@ -1,7 +1,10 @@
 package hudson.plugins.helpers;
 
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReportingAction;
+import hudson.plugins.cppncss.parser.StatisticSummary;
+import hudson.plugins.cppncss.parser.StringStatisticSummary;
 
 import java.io.Serializable;
 
@@ -82,8 +85,21 @@ public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>>
      * Override to control the build summary detail.
      *
      * @return the summary string for the main build page.
+     * @deprecated Use {@link #getStatisticSummary()}
      */
+    @Deprecated
     public String getSummary() {
+        if (Util.isOverridden(AbstractBuildAction.class, this.getClass(), "getStatisticSummary")) {
+            return getStatisticSummary().getHtmlSummary();
+        }
         return "";
+    }
+
+    /**
+     * @since TODO
+     */
+    public StatisticSummary getStatisticSummary() {
+        // default to the obsolete method
+        return new StringStatisticSummary(getSummary());
     }
 }
