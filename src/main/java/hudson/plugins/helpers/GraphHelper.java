@@ -1,6 +1,7 @@
 package hudson.plugins.helpers;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.cppncss.AbstractBuildReport;
 import hudson.plugins.cppncss.parser.Statistic;
 import hudson.util.ChartUtil;
@@ -233,7 +234,7 @@ public class GraphHelper {
     	DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
     	
     	for (AbstractBuild<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) { 
-        	ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(lastBuild);
+        	ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel((Run<?, ?>) lastBuild);
             AbstractBuildReport action = lastBuild.getAction(AbstractBuildReport.class);
             if (action != null) {
             	builder.add(collector.getCollectedNumber(action), collector.getTitle(), label);

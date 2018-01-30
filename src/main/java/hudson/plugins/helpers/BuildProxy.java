@@ -40,7 +40,7 @@ public final class BuildProxy implements Serializable {
      * @param ghostwriter The ghostwriter that will be doing the work for the publisher.
      * @param build       The build.
      * @param listener    The build listener.
-     * @return <code>true</code> if the build can continue.
+     * @return {@code true} if the build can continue.
      * @throws IOException          on IOException.
      * @throws InterruptedException on InterruptedException.
      */
@@ -183,7 +183,6 @@ public final class BuildProxy implements Serializable {
 
     /**
      * Root directory of the {@link hudson.model.AbstractBuild} on the master.
-     * <p/>
      * Files related to the {@link hudson.model.AbstractBuild} should be stored below this directory.
      *
      * @return Root directory of the {@link hudson.model.AbstractBuild} on the master.
@@ -194,7 +193,6 @@ public final class BuildProxy implements Serializable {
 
     /**
      * Returns the root directory of the checked-out module on the machine where the build executes.
-     * <p/>
      * This is usually where <tt>pom.xml</tt>, <tt>build.xml</tt>
      * and so on exists.
      *
@@ -206,7 +204,6 @@ public final class BuildProxy implements Serializable {
 
     /**
      * Root directory of the {@link hudson.model.AbstractProject} on the master.
-     * <p/>
      * Files related to the {@link hudson.model.AbstractProject} should be stored below this directory.
      *
      * @return Root directory of the {@link hudson.model.AbstractProject} on the master.

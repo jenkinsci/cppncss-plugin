@@ -20,7 +20,6 @@ public abstract class HealthTarget<M extends HealthMetric<OBSERVABLE>, OBSERVABL
 	private final Float fail;
 	private final Float failNew;
 
-    @DataBoundConstructor
     public HealthTarget(M metric, String healthy, String unhealthy, String unstable, String fail, String failNew) {
         this.metric = metric;
 		this.fail = safeParse(fail);
