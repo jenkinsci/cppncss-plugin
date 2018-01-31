@@ -27,8 +27,8 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * @since TODO
- * @deprecated Compatibility layer for external class usages.
+ * Stores summary string.
+ * @deprecated Compatibility class for {@link hudson.plugins.helpers.AbstractBuildAction#getStatisticSummary()}.
  */
 @Deprecated
 @Restricted(NoExternalUse.class)

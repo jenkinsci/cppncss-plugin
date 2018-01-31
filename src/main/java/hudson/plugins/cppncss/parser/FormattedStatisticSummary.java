@@ -30,7 +30,6 @@ import javax.annotation.Nonnull;
 
 /**
  * @author Oleg Nenashev
- * @since TODO
  */
 @Restricted(NoExternalUse.class)
 public final class FormattedStatisticSummary extends StatisticSummary {

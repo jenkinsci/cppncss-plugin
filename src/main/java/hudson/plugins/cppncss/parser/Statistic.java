@@ -18,7 +18,7 @@ import java.util.*;
  * @author Shaohua Wen
  * @since 25-Feb-2008 21:33:40
  */
-@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Not used in XStream")
+@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Ignored in XStream")
 public class Statistic implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 

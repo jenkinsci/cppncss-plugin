@@ -24,8 +24,7 @@ public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>>
     private static final long serialVersionUID = 31415926L;
 
     /**
-     * The owner of this Action.  Ideally I'd like this to be final and set in the constructor, but Maven does not
-     * let us do that, so we need a setter.
+     * The owner of this Action.
      */
     private transient BUILD build = null;
 

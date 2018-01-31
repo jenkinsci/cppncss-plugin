@@ -90,12 +90,8 @@ public class CppNCSSPublisher extends AbstractPublisherImpl {
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }
 
-        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            if (req == null) {
-                throw new IllegalStateException("Request has not been passed to " + DescriptorImpl.class);
-            }
+        static {
             ConvertUtils.register(CppNCSSHealthMetrics.CONVERTER, CppNCSSHealthMetrics.class);
-            return req.bindJSON(CppNCSSPublisher.class, formData);
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
