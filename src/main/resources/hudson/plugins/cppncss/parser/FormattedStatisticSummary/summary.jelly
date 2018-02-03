@@ -1,0 +1,5 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <!-- The class is final, so we trust the implementation -->
+  <j:out value="${it.htmlSummary}"/>
+</j:jelly>

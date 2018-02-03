@@ -1,11 +1,13 @@
 package hudson.plugins.cppncss.parser;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractBuild;
 import hudson.util.IOException2;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import javax.annotation.CheckForNull;
 import java.io.*;
 import java.util.*;
 
@@ -16,10 +18,16 @@ import java.util.*;
  * @author Shaohua Wen
  * @since 25-Feb-2008 21:33:40
  */
+@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Ignored in XStream")
 public class Statistic implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    private AbstractBuild<?, ?> owner;
+    /**
+     * @deprecated this field should not be used
+     */
+    @CheckForNull
+    private transient AbstractBuild<?, ?> owner;
+
     private String name;
     private long functions;
     private long ncss;
@@ -85,6 +93,9 @@ public class Statistic implements Serializable {
                              lastTag = null;
                              lastText = null;
                              break;
+                         default:
+                             // Do nothing
+                             break;
             			}
                     }
             		Statistic s = new Statistic(data.get("name"));
@@ -93,8 +104,8 @@ public class Statistic implements Serializable {
             			String file = fileStr.substring(0,fileStr.lastIndexOf(":"));
             			s.setParentElement(file);
             		}
-            		s.setNcss(Long.valueOf(data.get(functionValueNames[1]).trim()));
-            		s.setCcn(Long.valueOf(data.get(functionValueNames[2]).trim()));
+            		s.setNcss(Long.parseLong(data.get(functionValueNames[1]).trim()));
+            		s.setCcn(Long.parseLong(data.get(functionValueNames[2]).trim()));
             		functionResults.add(s);
     			}
     			parser.next();
@@ -137,12 +148,15 @@ public class Statistic implements Serializable {
                              lastTag = null;
                              lastText = null;
                              break;
+                         default:
+                             // Do nothing
+                             break;
             			}
                     }
             		Statistic s = new Statistic(data.get("name"));
-            		s.setNcss(Long.valueOf(data.get(fileValueNames[1]).trim()));
-            		s.setCcn(Long.valueOf(data.get(fileValueNames[2]).trim()));
-            		s.setFunctions(Long.valueOf(data.get(fileValueNames[3]).trim()));
+            		s.setNcss(Long.parseLong(data.get(fileValueNames[1]).trim()));
+            		s.setCcn(Long.parseLong(data.get(fileValueNames[2]).trim()));
+            		s.setFunctions(Long.parseLong(data.get(fileValueNames[3]).trim()));
             		fileResults.add(s);
     			}
     			parser.next();
@@ -296,6 +310,11 @@ public class Statistic implements Serializable {
         this.ncss = ncss;
     }
 
+    /**
+     * @deprecated this field is not really supposed to be used.
+     */
+    @Deprecated
+    @CheckForNull
 	public AbstractBuild<?, ?> getOwner() {
         return owner;
     }
@@ -345,30 +364,34 @@ public class Statistic implements Serializable {
                 '}';
     }
 
+    /**
+     * @deprecated use {@link #getStatisticSummary()}
+     */
+    @Deprecated
     public String toSummary() {
-        return "<ul>"
-                + diff(0, ccn, "ccn")
-                + diff(0, functions, "functions")
-                + diff(0, ncss, "ncss")
-                + "</ul>";
+        return getStatisticSummary().getHtmlSummary();
     }
 
-    private static String diff(long a, long b, String name) {
-        if (a == b) {
-            return "";
-        } else if (a < b) {
-            return "<li>" + name + " (+" + (b - a) + ")</li>";
-        } else { // if (a < b)
-            return "<li>" + name + " (-" + (a - b) + ")</li>";
-        }
+    /**
+     * @since TODO
+     */
+    public StatisticSummary getStatisticSummary() {
+        return new FormattedStatisticSummary(ccn, functions, ncss);
     }
 
+    /**
+     * @deprecated Use {@link #getStatisticSummary(Statistic)}
+     */
+    @Deprecated
     public String toSummary(Statistic totals) {
-        return "<ul>"
-                + diff(totals.ccn, ccn, "ccn")
-                + diff(totals.functions, functions, "functions")
-                + diff(totals.ncss, ncss, "ncss")
-                + "</ul>";
+        return getStatisticSummary(totals).getHtmlSummary();
+    }
+
+    /**
+     * @since TODO
+     */
+    public StatisticSummary getStatisticSummary(Statistic totals) {
+        return new FormattedStatisticSummary(totals, this);
     }
 
     public void set(Statistic that) {

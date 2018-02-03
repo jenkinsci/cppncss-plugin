@@ -2,6 +2,7 @@ package hudson.plugins.cppncss;
 
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReportingAction;
+import hudson.plugins.cppncss.parser.StatisticSummary;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.cppncss.parser.StatisticsTotalResult;
 import hudson.plugins.helpers.AbstractBuildAction;
@@ -52,21 +53,20 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
     	return functionNcssViolationThreshold;
     }
 
-	/**
+    /**
      * The summary of this build report for display on the build index page.
-     *
-     * @return
      */
-    public String getSummary() {
+    @Override
+    public StatisticSummary getStatisticSummary() {
         AbstractBuild<?, ?> prevBuild = getBuild().getPreviousBuild();
         while (prevBuild != null && prevBuild.getAction(getClass()) == null) {
             prevBuild = prevBuild.getPreviousBuild();
         }
         if (prevBuild == null) {
-            return totals.toSummary();
+            return totals.getStatisticSummary();
         } else {
             AbstractBuildReport action = prevBuild.getAction(getClass());
-            return totals.toSummary(action.getTotals());
+            return totals.getStatisticSummary(action.getTotals());
         }
     }
 

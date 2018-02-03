@@ -1,6 +1,7 @@
 package hudson.plugins.helpers;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.cppncss.AbstractBuildReport;
 import hudson.plugins.cppncss.parser.Statistic;
 import hudson.util.ChartUtil;
@@ -25,6 +26,9 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.ui.RectangleInsets;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * TODO javadoc.
@@ -64,7 +68,7 @@ public class GraphHelper {
         rsp.sendRedirect2(req.getContextPath() + "/images/headless.png");
     }
 
-    public static JFreeChart buildChart(final AbstractBuild<?, ?> build, final Integer functionCcnViolationThreshold, final Integer functionNcssViolationThreshold) {
+    public static JFreeChart buildChart(final AbstractBuild<?, ?> build, final @CheckForNull Integer functionCcnViolationThreshold, final @CheckForNull Integer functionNcssViolationThreshold) {
     	
         final JFreeChart chart = ChartFactory.createStackedAreaChart(
                 null,                     // chart title
@@ -175,9 +179,10 @@ public class GraphHelper {
 					public long getCollectedNumber(AbstractBuildReport action) {
 						Collection<Statistic> functionResults = action.getResults().getFunctionResults();
 						int ccnViolatedFunctions = 0;
-		            	
+
+						int threshold = functionCcnViolationThreshold != null ? functionCcnViolationThreshold.intValue() : 0;
 		            	for (Statistic statistic : functionResults) {
-							if(statistic.getCcn() > functionCcnViolationThreshold.intValue())
+							if(statistic.getCcn() > threshold)
 								ccnViolatedFunctions ++;
 						}
 						return ccnViolatedFunctions;
@@ -199,9 +204,10 @@ public class GraphHelper {
 					public long getCollectedNumber(AbstractBuildReport action) {
 						Collection<Statistic> functionResults = action.getResults().getFunctionResults();
 		            	int ncssViolatedFunctions = 0;
-		            	
+
+						int threshold = functionNcssViolationThreshold != null ? functionNcssViolationThreshold.intValue() : 0;
 		            	for (Statistic statistic : functionResults) {
-							if(statistic.getNcss() > functionNcssViolationThreshold.intValue())
+							if(statistic.getNcss() > threshold)
 								ncssViolatedFunctions ++;
 						}
 						return ncssViolatedFunctions;
@@ -228,17 +234,20 @@ public class GraphHelper {
 		    rendu.setBasePaint(color);
 		    categoryPlot.setRenderer(index,rendu);
 	}
-    
-	private static CategoryDataset buildDataset(AbstractBuild<?, ?> build, DataCollector collector) {
+
+	@Nonnull
+	private static CategoryDataset buildDataset(@CheckForNull AbstractBuild<?, ?> build, @Nonnull DataCollector collector) {
     	DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
-    	
-    	for (AbstractBuild<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) { 
-        	ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(lastBuild);
-            AbstractBuildReport action = lastBuild.getAction(AbstractBuildReport.class);
-            if (action != null) {
-            	builder.add(collector.getCollectedNumber(action), collector.getTitle(), label);
-            }
-        }
+
+    	if (build != null) {
+			for (AbstractBuild<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) {
+				ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel((Run<?, ?>) lastBuild);
+				AbstractBuildReport action = lastBuild.getAction(AbstractBuildReport.class);
+				if (action != null) {
+					builder.add(collector.getCollectedNumber(action), collector.getTitle(), label);
+				}
+			}
+		}
         return builder.build();
 	}
 }

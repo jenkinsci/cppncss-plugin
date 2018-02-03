@@ -1,18 +1,18 @@
 package hudson.plugins.helpers;
 
 import hudson.model.BuildListener;
-import hudson.remoting.Callable;
+import jenkins.security.MasterToSlaveCallable;
 
 import java.io.IOException;
 
 /**
  * A helper class that is used when passing Ghostwriter between the slave and master and invoking the appropriate
- * actions on the slave or the master.
+ * actions on the agent or the master node.
  *
  * @author Stephen Connolly
  * @since 28-Jan-2008 22:12:29
  */
-class BuildProxyCallableHelper implements Callable<BuildProxy, Exception>{
+class BuildProxyCallableHelper extends MasterToSlaveCallable<BuildProxy, Exception> {
     // ------------------------------ FIELDS ------------------------------
 
     private final BuildProxy buildProxy;

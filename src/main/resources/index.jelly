@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
   This plugin integrates <a href="http://cppncss.sourceforge.net/">Cpp NCSS reports</a> to Jenkins.
 </div>

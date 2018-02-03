@@ -92,13 +92,17 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
             return;
         }
 
-        Calendar t = getProject().getLastBuild().getTimestamp();
+        final AbstractBuild<?, ?> lastBuild = getProject().getLastBuild();
+        if (lastBuild == null) { // No sense to build graph if there is no builds, right?
+            return;
+        }
 
+        Calendar t = lastBuild.getTimestamp();
         if (req.checkIfModified(t, rsp)) {
             return; // up to date
         }
 
-        ChartUtil.generateGraph(req, rsp, GraphHelper.buildChart(getProject().getLastBuild(), getFunctionCcnViolationThreshold(), getFunctionNcssViolationThreshold()), getGraphWidth(),
+        ChartUtil.generateGraph(req, rsp, GraphHelper.buildChart(lastBuild, getFunctionCcnViolationThreshold(), getFunctionNcssViolationThreshold()), getGraphWidth(),
                 getGraphHeight());
     }
 
