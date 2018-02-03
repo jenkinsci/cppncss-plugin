@@ -9,7 +9,7 @@
 
     <artifactId>cppncss</artifactId>
     <packaging>hpi</packaging>
-    <version>1.2</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Jenkins CppNCSS plugin</name>
     <url>https://wiki.jenkins.io/display/JENKINS/CPPNCSS+Plugin</url>
 
@@ -63,10 +63,6 @@
             <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
-
-  <scm>
-    <tag>cppncss-1.2</tag>
-  </scm>
 </project>  
   
 
