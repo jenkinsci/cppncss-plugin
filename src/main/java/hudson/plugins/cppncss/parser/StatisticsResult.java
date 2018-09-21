@@ -1,7 +1,7 @@
 package hudson.plugins.cppncss.parser;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 import javax.annotation.CheckForNull;
 import java.io.Serializable;
@@ -21,7 +21,7 @@ public class StatisticsResult  implements Serializable {
 	 */
 	@Deprecated
 	@CheckForNull
-	private transient AbstractBuild<?, ?> owner;
+	private transient Run<?, ?> owner;
 
 	public void setFunctionResults(Collection<Statistic> functionResults) {
 		this.functionResults = functionResults;
@@ -64,11 +64,11 @@ public class StatisticsResult  implements Serializable {
 	 */
 	@Deprecated
 	@CheckForNull
-	public AbstractBuild<?, ?> getOwner() {
+	public Run<?, ?> getOwner() {
         return owner;
     }
 
-    public void setOwner(AbstractBuild<?, ?> owner) {
+    public void setOwner(Run<?, ?> owner) {
         this.owner = owner;
         for (Statistic result : functionResults) {
 			result.setOwner(owner);

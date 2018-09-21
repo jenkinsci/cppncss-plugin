@@ -1,12 +1,7 @@
 package hudson.plugins.helpers;
 
-import java.io.File;
-
-import hudson.model.AbstractProject;
 import hudson.model.Actionable;
-
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import hudson.model.Job;
 
 /**
  * An action that is associated with a project.
@@ -16,7 +11,7 @@ import org.kohsuke.stapler.StaplerResponse;
  *            the type of project that this action is associated with.
  * @since 04-Feb-2008 19:42:40
  */
-abstract public class AbstractProjectAction<PROJECT extends AbstractProject<?, ?>>
+abstract public class AbstractProjectAction<PROJECT extends Job<?, ?>>
 		extends Actionable {
 	/**
 	 * The owner of this action.

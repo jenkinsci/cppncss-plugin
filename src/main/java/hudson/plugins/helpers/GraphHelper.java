@@ -1,6 +1,5 @@
 package hudson.plugins.helpers;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.plugins.cppncss.AbstractBuildReport;
 import hudson.plugins.cppncss.parser.Statistic;
@@ -68,7 +67,7 @@ public class GraphHelper {
         rsp.sendRedirect2(req.getContextPath() + "/images/headless.png");
     }
 
-    public static JFreeChart buildChart(final AbstractBuild<?, ?> build, final @CheckForNull Integer functionCcnViolationThreshold, final @CheckForNull Integer functionNcssViolationThreshold) {
+    public static JFreeChart buildChart(final Run<?, ?> build, final @CheckForNull Integer functionCcnViolationThreshold, final @CheckForNull Integer functionNcssViolationThreshold) {
     	
         final JFreeChart chart = ChartFactory.createStackedAreaChart(
                 null,                     // chart title
@@ -219,7 +218,7 @@ public class GraphHelper {
         return chart;
     }
 
-	private static void build_category(AbstractBuild<?, ?> build,
+	private static void build_category(Run<?, ?> build,
 			final JFreeChart chart, int index, Color color, String title, CategoryDatasetBuilder datasetBuilder) {
 		    NumberAxis axis= new NumberAxis(title);
 		    axis.setLabelPaint(color);
@@ -236,11 +235,11 @@ public class GraphHelper {
 	}
 
 	@Nonnull
-	private static CategoryDataset buildDataset(@CheckForNull AbstractBuild<?, ?> build, @Nonnull DataCollector collector) {
+	private static CategoryDataset buildDataset(@CheckForNull Run<?, ?> build, @Nonnull DataCollector collector) {
     	DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
 
     	if (build != null) {
-			for (AbstractBuild<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) {
+			for (Run<?, ?> lastBuild = build; lastBuild != null; lastBuild = lastBuild.getPreviousBuild()) {
 				ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel((Run<?, ?>) lastBuild);
 				AbstractBuildReport action = lastBuild.getAction(AbstractBuildReport.class);
 				if (action != null) {

@@ -1,6 +1,6 @@
 package hudson.plugins.helpers;
 
-import hudson.model.BuildListener;
+import hudson.model.TaskListener;
 import jenkins.security.MasterToSlaveCallable;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ class BuildProxyCallableHelper extends MasterToSlaveCallable<BuildProxy, Excepti
 
     private final BuildProxy buildProxy;
     private final Ghostwriter ghostwriter;
-    private final BuildListener listener;
+    private final TaskListener listener;
 
     // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -30,7 +30,7 @@ class BuildProxyCallableHelper extends MasterToSlaveCallable<BuildProxy, Excepti
      */
     BuildProxyCallableHelper(BuildProxy buildProxy,
                              Ghostwriter ghostwriter,
-                             BuildListener listener) {
+                             TaskListener listener) {
         this.buildProxy = buildProxy;
         this.ghostwriter = ghostwriter;
         this.listener = listener;

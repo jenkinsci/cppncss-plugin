@@ -4,8 +4,8 @@ import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import hudson.util.IOException2;
-
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ public final class BuildProxy implements Serializable {
     // It should not be serialized over the channel (JENKINS-49237)
     private final Calendar timestamp;
     // TODO: it should not be serialized over the channel. It should exist only on the master side
-    private final List<AbstractBuildAction<AbstractBuild<?, ?>>> actions =
-            new ArrayList<AbstractBuildAction<AbstractBuild<?, ?>>>();
+    private final List<AbstractBuildAction<Run<?, ?>>> actions =
+            new ArrayList<AbstractBuildAction<Run<?, ?>>>();
     //TODO: This class should not be serialized as well?
     private Result result = null;
     private boolean continueBuild = true;
@@ -51,8 +51,23 @@ public final class BuildProxy implements Serializable {
                                     AbstractBuild<?, ?> build,
                                     BuildListener listener)
             throws IOException, InterruptedException {
+    	return doPerform(ghostwriter, build, build.getWorkspace(), listener);
+    }
 
-        // first, do we need to do anything on the slave
+	/**
+     * (Call from master) Invokes the ghostwriter on the master and slave nodes for this build.
+     *
+     * @param ghostwriter The ghostwriter that will be doing the work for the publisher.
+     * @param run       The build.
+     * @param workspace Path to the build's workspace
+     * @param listener    The task listener.
+     * @return {@code true} if the build can continue.
+     * @throws IOException          on IOException.
+     * @throws InterruptedException on InterruptedException.
+     */
+    public static boolean doPerform(Ghostwriter ghostwriter, Run<?, ?> run, FilePath workspace,
+			TaskListener listener) throws IOException, InterruptedException {
+    	// first, do we need to do anything on the slave
 
         if (ghostwriter instanceof Ghostwriter.SlaveGhostwriter) {
 
@@ -60,18 +75,18 @@ public final class BuildProxy implements Serializable {
 
             BuildProxy buildProxy = new BuildProxy(
                     //TODO: It is not compatible with custom artifact managers
-                    new FilePath(build.getArtifactsDir()),
-                    new FilePath(build.getProject().getRootDir()),
-                    new FilePath(build.getRootDir()),
-                    build.getModuleRoot(),
-                    build.getTimestamp());
+                    new FilePath(run.getArtifactsDir()),
+                    new FilePath(run.getParent().getRootDir()),
+                    new FilePath(run.getRootDir()),
+                    workspace,
+                    run.getTimestamp());
 
             BuildProxyCallableHelper callableHelper = new BuildProxyCallableHelper(buildProxy, ghostwriter, listener);
 
             try {
                 buildProxy = buildProxy.getExecutionRootDir().act(callableHelper);
 
-                buildProxy.updateBuild(build);
+                buildProxy.updateBuild(run);
 
                 // terminate the build if necessary
                 if (!buildProxy.isContinueBuild()) {
@@ -87,10 +102,11 @@ public final class BuildProxy implements Serializable {
         final Ghostwriter.MasterGhostwriter masterGhostwriter = Ghostwriter.MasterGhostwriter.class.cast(ghostwriter);
 
         return masterGhostwriter == null
-                || masterGhostwriter.performFromMaster(build, build.getModuleRoot(), listener);
-    }
+                || masterGhostwriter.performFromMaster(run, workspace, listener);
+		
+	}
 
-    //TODO: this logic undermines error propagation in the code
+	//TODO: this logic undermines error propagation in the code
     /**
      * Takes a remote exception that has been wrapped up in the remoting layer, and rethrows it as IOException,
      * InterruptedException or if all else fails, a RuntimeException.
@@ -103,7 +119,7 @@ public final class BuildProxy implements Serializable {
      * @throws RuntimeException     if the wrapped exception is neither an IOException nor an InterruptedException.
      */
     private static RuntimeException unwrapException(Exception e,
-                                                    BuildListener listener)
+                                                    TaskListener listener)
             throws IOException, InterruptedException {
 
         if (e.getCause() instanceof IOException) {
@@ -127,22 +143,22 @@ public final class BuildProxy implements Serializable {
     /**
      * (Designed for execution from the master) Updates the build with the results that were reported to this proxy.
      *
-     * @param build The build to update.
+     * @param run The run to update.
      */
-    public void updateBuild(AbstractBuild<?, ?> build) {
+    public void updateBuild(Run<?, ?> run) {
         // update the actions
-        for (AbstractBuildAction<AbstractBuild<?, ?>> action : actions) {
-            if (!build.getActions().contains(action)) {
-                action.setBuild(build);
-                build.getActions().add(action);
+        for (AbstractBuildAction<Run<?, ?>> action : actions) {
+            if (!run.getActions().contains(action)) {
+                action.setBuild(run);
+                run.getActions().add(action);
             }
         }
 
         // update the result
         // TODO: Logic needs to be updated to support Any Build Step and Pipeline jobs
-        Result currentResult = build.getResult();
+        Result currentResult = run.getResult();
         if (result != null && currentResult != null && result.isWorseThan(currentResult)) {
-            build.setResult(result);
+            run.setResult(result);
         }
     }
 
@@ -179,7 +195,7 @@ public final class BuildProxy implements Serializable {
      *
      * @return Value for property 'actions'.
      */
-    public List<AbstractBuildAction<AbstractBuild<?, ?>>> getActions() {
+    public List<AbstractBuildAction<Run<?, ?>>> getActions() {
         return actions;
     }
 

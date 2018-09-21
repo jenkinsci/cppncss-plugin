@@ -1,8 +1,8 @@
 package hudson.plugins.helpers;
 
 import hudson.FilePath;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -41,7 +41,7 @@ public interface Ghostwriter extends Serializable {
          *                              provide a better error message, if it can do so, so that users have better
          *                              understanding on why it failed.
          */
-        boolean performFromSlave(BuildProxy build, BuildListener listener) throws InterruptedException, IOException;
+        boolean performFromSlave(BuildProxy build, TaskListener listener) throws InterruptedException, IOException;
     }
 
     public static interface MasterGhostwriter extends Ghostwriter {
@@ -65,7 +65,7 @@ public interface Ghostwriter extends Serializable {
          *                              provide a better error message, if it can do so, so that users have better
          *                              understanding on why it failed.
          */
-        boolean performFromMaster(AbstractBuild<?, ?> build, FilePath executionRoot, BuildListener listener) throws InterruptedException, IOException;
+        boolean performFromMaster(Run<?, ?> build, FilePath executionRoot, TaskListener listener) throws InterruptedException, IOException;
     }
 
 }
