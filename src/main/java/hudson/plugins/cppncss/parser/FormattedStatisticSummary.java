@@ -88,7 +88,7 @@ public final class FormattedStatisticSummary extends StatisticSummary {
         return "<ul>"
                 + diff(wasCcn, ccn, "ccn")
                 + diff(wasFunctions, functions, "functions")
-                + diff(wasCcn, ncss, "ncss")
+                + diff(wasNcss, ncss, "ncss")
                 + "</ul>";
     }
 
