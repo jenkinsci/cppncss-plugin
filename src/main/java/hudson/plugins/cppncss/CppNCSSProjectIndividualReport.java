@@ -17,7 +17,6 @@ public class CppNCSSProjectIndividualReport extends
 		AbstractProjectReport<Job<?, ?>> implements
 		ProminentProjectAction {
 	private CppNCSSProjectFunctionIndividualReport cppFunction;
-	private Job<?,?> project;
 	private Integer functionCcnViolationThreshold;
 	private Integer functionNcssViolationThreshold;
 
@@ -26,7 +25,6 @@ public class CppNCSSProjectIndividualReport extends
 			Integer functionNcssViolationThreshold) {
 		super(project, functionCcnViolationThreshold,
 				functionNcssViolationThreshold);
-		this.project = project;
 		this.functionCcnViolationThreshold = functionCcnViolationThreshold;
 		this.functionNcssViolationThreshold = functionNcssViolationThreshold;
 	}
@@ -39,7 +37,7 @@ public class CppNCSSProjectIndividualReport extends
 	public AbstractProjectAction getDynamic(String name, StaplerRequest req,
 			StaplerResponse rsp) {
 		if (cppFunction == null) {
-			cppFunction = new CppNCSSProjectFunctionIndividualReport(project,
+			cppFunction = new CppNCSSProjectFunctionIndividualReport(getProject(),
 					functionCcnViolationThreshold,
 					functionNcssViolationThreshold);
 		}

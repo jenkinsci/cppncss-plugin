@@ -12,7 +12,6 @@ import hudson.plugins.cppncss.parser.Statistic;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
-
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.SingleFileSCM;
 
@@ -37,7 +36,8 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
         FreeStyleBuild build1 = project.scheduleBuild2(0).get();
 	
         FreeStyleBuild build2 = project.scheduleBuild2(0).get();
-        System.out.println(getLog(build2));
+        assertLogContains("Parsing CppNCSS report file \"first-report-cppncss.xml\"", build2);
+        assertLogContains("Parsing CppNCSS report file \"second-report-cppncss.xml\"", build2);
         assertBuildStatusSuccess(build2);
     }
     
@@ -95,8 +95,9 @@ public class CppNCSSPublisherTest extends HudsonTestCase {
 		}
     	
         assertEquals(5, ccnViolatedFunctions);
-        System.out.println(getLog(build3));
-        
+
+        assertLogContains("Parsing CppNCSS report file \"first-report-cppncss.xml\"", build3);
+        assertLogContains("Parsing CppNCSS report file \"second-report-cppncss.xml\"", build3);
         assertBuildStatusSuccess(build3);
 
     }

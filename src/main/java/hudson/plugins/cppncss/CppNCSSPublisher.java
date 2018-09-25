@@ -2,12 +2,11 @@ package hudson.plugins.cppncss;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
+import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -92,28 +91,21 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
 
     @Override
     public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
-    	CppNCSSProjectIndividualReport report = new CppNCSSProjectIndividualReport(run.getParent(), functionCcnViolationThreshold, functionNcssViolationThreshold);
-    	ActionGetter getter = new ActionGetter();
-    	getter.addProjectAction(report);
-    	run.addAction(getter);
+        CppNCSSProjectIndividualReport report = new CppNCSSProjectIndividualReport(run.getParent(), functionCcnViolationThreshold, functionNcssViolationThreshold);
+        ActionGetter getter = new ActionGetter();
+        getter.addProjectAction(report);
+        run.addAction(getter);
         try {
-			BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
-		} catch (IOException | InterruptedException e) {
-			run.setResult(Result.FAILURE);
-			e.printStackTrace(listener.getLogger());
-		}
-    }
-    
-    @Override
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, java.io.IOException {
-    	FilePath wkspace = build.getWorkspace();
-    	if (wkspace == null)
-    		return false;
-    	perform(build, wkspace, launcher, listener);
-        return true;
+            BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
+            listener.getLogger().println("RAIRAIIRA");
+        } catch (IOException | InterruptedException e) {
+            run.setResult(Result.FAILURE);
+            e.printStackTrace(listener.getLogger());
+        }
     }
 
-    @Extension
+ 
+    @Extension @Symbol("cppncss")
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         /**
@@ -143,32 +135,32 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
      */
     protected static class ActionGetter implements SimpleBuildStep.LastBuildAction {
 
-    	private Collection<Action> projectActions = new ArrayList<Action>();
-		
-    	@Override
-		public String getIconFileName() {
-			return null;
-		}
+        private Collection<Action> projectActions = new ArrayList<Action>();
 
-		@Override
-		public String getDisplayName() {
-			return null;
-		}
+        @Override
+        public String getIconFileName() {
+            return null;
+        }
 
-		@Override
-		public String getUrlName() {
-			return null;
-		}
+        @Override
+        public String getDisplayName() {
+            return null;
+        }
 
-		@Override
-		public Collection<? extends Action> getProjectActions() {
-			return projectActions;
-		}
-		
-		public void addProjectAction(Action action) {
-			projectActions.add(action);
-		}
-    	
+        @Override
+        public String getUrlName() {
+            return null;
+        }
+
+        @Override
+        public Collection<? extends Action> getProjectActions() {
+            return projectActions;
+        }
+
+        public void addProjectAction(Action action) {
+            projectActions.add(action);
+        }
+
     }
 
 }

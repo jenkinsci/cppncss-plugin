@@ -80,6 +80,7 @@ public class CppNCSSGhostwriter
         StatisticsResult results = null;
         Set<String> parsedFiles = new HashSet<String>();
         for (FilePath path : paths) {
+            listener.getLogger().println("Parsing CppNCSS report file \"" + path.getName() + "\"");
             final String pathStr = path.getRemote();
             if (!parsedFiles.contains(pathStr)) {
                 parsedFiles.add(pathStr);
