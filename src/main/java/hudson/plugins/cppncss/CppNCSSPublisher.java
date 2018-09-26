@@ -97,7 +97,6 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         run.addAction(getter);
         try {
             BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
-            listener.getLogger().println("RAIRAIIRA");
         } catch (IOException | InterruptedException e) {
             run.setResult(Result.FAILURE);
             e.printStackTrace(listener.getLogger());
