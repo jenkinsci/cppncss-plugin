@@ -34,7 +34,7 @@
     <item name="create_event_observer_r( event_callback_fptr, int ) at D:\wen1\workspace\0033\src\lib\eventobserver.c:23">
       <value>6</value>
       <value>6</value>
-      <value>1</value>
+      <value>5</value>
     </item>
     <item name="get_statistics_current_rtp_session_number__r( statistics_observer_t* ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:86">
       <value>7</value>
@@ -100,7 +100,7 @@
     <item name="D:\wen1\workspace\0033\src\lib\eventobserver.c">
       <value>7</value>
       <value>8</value>
-      <value>2</value>
+      <value>6</value>
       <value>2</value>
     </item>
     <item name="D:\wen1\workspace\0033\src\include\portallocator.h">
