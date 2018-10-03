@@ -82,7 +82,8 @@ public class CppNCSSGhostwriter
             if (!parsedFiles.contains(pathStr)) {
                 parsedFiles.add(pathStr);
                 try {
-                    StatisticsResult result = Statistic.parse(new File(pathStr));
+                    StatisticsResult result = Statistic.parse(new File(pathStr), functionNcssViolationThreshold,
+                            functionCcnViolationThreshold);
                     if (results == null) {
                         results = result;
                     } else {

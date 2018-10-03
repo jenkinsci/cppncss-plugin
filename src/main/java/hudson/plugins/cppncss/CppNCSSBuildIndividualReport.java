@@ -3,7 +3,11 @@ package hudson.plugins.cppncss;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.HealthReport;
+import hudson.plugins.cppncss.parser.Statistic;
 import hudson.plugins.cppncss.parser.StatisticsResult;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -18,8 +22,6 @@ public class CppNCSSBuildIndividualReport extends
 		AbstractBuildReport<AbstractBuild<?, ?>> implements Action {
 
 	private HealthReport healthReport;
-
-	private CppNcssBuildFunctionIndividualReport cppFunction;
 
 	public CppNCSSBuildIndividualReport(StatisticsResult results,
 			Integer functionCcnViolationThreshold,
@@ -55,11 +57,9 @@ public class CppNCSSBuildIndividualReport extends
 
 	public AbstractBuildReport getDynamic(String name, StaplerRequest req,
 			StaplerResponse rsp) {
-		if (cppFunction == null) {
-			cppFunction = new CppNcssBuildFunctionIndividualReport(
-					getResults(), getFunctionCcnViolationThreshold(),
+	    CppNcssBuildFunctionIndividualReport cppFunction = new CppNcssBuildFunctionIndividualReport(
+					getResults().singleFileResult(name), getFunctionCcnViolationThreshold(),
 					getFunctionNcssViolationThreshold());
-		}
 		if (name.length() >= 1) {
 			cppFunction.setFileName(name);
 			cppFunction.setBuild(this.getBuild());

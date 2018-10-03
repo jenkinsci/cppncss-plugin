@@ -69,14 +69,7 @@ public enum CppNCSSHealthMetrics implements HealthMetric<CppNCSSBuildIndividualR
             return "Number of CCN violated functions";
         }
         public float measure(CppNCSSBuildIndividualReport report) {
-        	int totalViolations = 0;
-        	Collection<Statistic> functionResults = report.getResults().getFunctionResults();
-            for (Statistic statistic : functionResults) {
-				if(statistic.getCcn() >= report.getFunctionCcnViolationThreshold()){
-					totalViolations ++;
-				}
-			}
-            return totalViolations;
+            return report.getTotals().getFunctionTotal().getCcnViolations();
         }
         
         public float measureNew(CppNCSSBuildIndividualReport observable) {
@@ -91,20 +84,13 @@ public enum CppNCSSHealthMetrics implements HealthMetric<CppNCSSBuildIndividualR
         }
     },
     
-    UMBER_OF_NCSS_VIOLATED_FUNCTION {
+    NUMBER_OF_NCSS_VIOLATED_FUNCTION {
 
         public String getName() {
             return "Number of NCSS violated functions";
         }
         public float measure(CppNCSSBuildIndividualReport report) {
-        	int totalViolations = 0;
-        	Collection<Statistic> functionResults = report.getResults().getFunctionResults();
-            for (Statistic statistic : functionResults) {
-				if(statistic.getNcss() >= report.getFunctionNcssViolationThreshold()){
-					totalViolations ++;
-				}
-			}
-            return totalViolations;
+            return report.getTotals().getFunctionTotal().getNcssViolations();
         }
         
         public float measureNew(CppNCSSBuildIndividualReport observable) {

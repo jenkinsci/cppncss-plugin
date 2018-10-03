@@ -4,6 +4,8 @@ import java.io.File;
 
 import hudson.model.AbstractProject;
 import hudson.model.Actionable;
+import hudson.plugins.cppncss.parser.StatisticSummary;
+import hudson.plugins.cppncss.parser.StringStatisticSummary;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -59,6 +61,15 @@ abstract public class AbstractProjectAction<PROJECT extends AbstractProject<?, ?
 	public boolean isGraphActive() {
 		return false;
 	}
+	
+	/**
+    * Override to control when the summary is shown above the report table
+    * 
+    * @return <code>true</code> if the action should show a summary above the report table.
+    */
+    public boolean isSummaryActive() {
+        return false;
+    }
 
 	/**
 	 * Override to define the graph name.
@@ -77,4 +88,8 @@ abstract public class AbstractProjectAction<PROJECT extends AbstractProject<?, ?
 		return functionNcssViolationThreshold;
 	}
 
+
+    /** Get the summary to show above the report
+     */
+    public abstract StatisticSummary getStatisticSummary();
 }

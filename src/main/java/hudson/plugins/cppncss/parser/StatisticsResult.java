@@ -7,6 +7,8 @@ import javax.annotation.CheckForNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Not used in XStream")
 public class StatisticsResult  implements Serializable {
@@ -57,13 +59,30 @@ public class StatisticsResult  implements Serializable {
 	public void clear() {
 		 functionResults.clear();
 		 fileResults.clear();
-	}
+    }
 
-	/**
-	 * @deprecated  Should not be used.
-	 */
-	@Deprecated
-	@CheckForNull
+    private static String escapeName(String name) {
+        return name.replace(':', '.').replace('\\', '.').replace('/', '.');
+    }
+
+    public StatisticsResult singleFileResult(String fileName) {
+        StatisticsResult result = new StatisticsResult();
+        Predicate<Statistic> fileNamesMatch = s -> escapeName(s.getParentElement()).contains(fileName);
+        Collection<Statistic> singleFileFunctionStats = getFunctionResults().stream()
+                .filter(fileNamesMatch).collect(Collectors.toList());
+        fileNamesMatch = s -> escapeName(s.getName()).contains(fileName);
+        Collection<Statistic> singleFileFileStats = getFileResults().stream().filter(fileNamesMatch)
+                .collect(Collectors.toList());
+        result.setFunctionResults(singleFileFunctionStats);
+        result.setFileResults(singleFileFileStats);
+        return result;
+    }
+
+    /**
+     * @deprecated Should not be used.
+     */
+    @Deprecated
+    @CheckForNull
 	public AbstractBuild<?, ?> getOwner() {
         return owner;
     }

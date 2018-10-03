@@ -43,10 +43,14 @@ public class CppNcssBuildFunctionIndividualReport<BUILD extends AbstractBuild<?,
 			return this;
 		}
 	}
+	
+    @Override
+    public boolean isSummaryActive() {
+        return true;
+    }
 
 	@Override
 	public String getDisplayName() {
 		return fileName;
 	}
-
 }

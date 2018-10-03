@@ -9,7 +9,10 @@
                 <j:set var="relativeUrlPath" value=""/>
 
                 <h2>${it.graphName}</h2>
-                <st:include page="normalGraph.jelly"/>
+                <st:include page="normalGraph.jelly"/>              
+            </j:if>
+            <j:if test="${it.summaryActive}">
+                <st:include page="summary.jelly" it="${it.statisticSummary}"/>
             </j:if>
             <st:include page="reportDetail.jelly"/>
         </l:main-panel>
