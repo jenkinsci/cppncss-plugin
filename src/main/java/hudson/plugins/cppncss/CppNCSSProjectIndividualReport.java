@@ -18,7 +18,6 @@ public class CppNCSSProjectIndividualReport extends
 		AbstractProjectReport<AbstractProject<?, ?>> implements
 		ProminentProjectAction {
 	private CppNCSSProjectFunctionIndividualReport cppFunction;
-	private AbstractProject project;
 	private Integer functionCcnViolationThreshold;
 	private Integer functionNcssViolationThreshold;
 
@@ -27,7 +26,6 @@ public class CppNCSSProjectIndividualReport extends
 			Integer functionNcssViolationThreshold) {
 		super(project, functionCcnViolationThreshold,
 				functionNcssViolationThreshold);
-		this.project = project;
 		this.functionCcnViolationThreshold = functionCcnViolationThreshold;
 		this.functionNcssViolationThreshold = functionNcssViolationThreshold;
 	}

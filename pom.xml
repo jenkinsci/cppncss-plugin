@@ -14,13 +14,14 @@
     <url>https://wiki.jenkins.io/display/JENKINS/CPPNCSS+Plugin</url>
 
     <properties>
-      <jenkins.version>1.651.3</jenkins.version>
+      <jenkins.version>2.73.3</jenkins.version>
       <java.level>8</java.level>
     </properties>
 
 	<build>
 		<plugins>
-			<plugin>			
+			<!--  Does not support lambdas
+			<plugin>				
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javancss-maven-plugin</artifactId>
 				<version>2.1</version>
@@ -33,6 +34,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
