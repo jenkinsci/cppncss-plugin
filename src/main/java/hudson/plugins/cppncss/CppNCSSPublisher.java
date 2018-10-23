@@ -2,20 +2,24 @@ package hudson.plugins.cppncss;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
+import org.jenkinsci.Symbol;
+import hudson.FilePath;
+import hudson.Launcher;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.Descriptor;
-import hudson.plugins.helpers.AbstractPublisherImpl;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.plugins.helpers.BuildProxy;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.plugins.helpers.health.HealthMetric;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import net.sf.json.JSONObject;
-
+import hudson.tasks.Recorder;
+import jenkins.tasks.SimpleBuildStep;
+import java.io.IOException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * TODO javadoc.
@@ -23,7 +27,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Stephen Connolly
  * @since 08-Jan-2008 21:24:06
  */
-public class CppNCSSPublisher extends AbstractPublisherImpl {
+public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
 
     private String reportFilenamePattern;
     private Integer functionCcnViolationThreshold = 10;
@@ -58,34 +62,32 @@ public class CppNCSSPublisher extends AbstractPublisherImpl {
         return targets;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean needsToRunAfterFinalized() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new CppNCSSProjectIndividualReport(project, functionCcnViolationThreshold, functionNcssViolationThreshold);
-    }
-
+    @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
 
-    protected Ghostwriter newGhostwriter() {
+    private Ghostwriter newGhostwriter() {
         return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, targets);
     }
 
-    @Extension
+    @Override
+    public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
+        try {
+            BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
+        } catch (IOException | InterruptedException e) {
+            run.setResult(Result.FAILURE);
+            e.printStackTrace(listener.getLogger());
+        }
+    }
+
+    @Extension @Symbol("cppncss")
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getDisplayName() {
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }

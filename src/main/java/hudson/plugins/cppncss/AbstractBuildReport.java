@@ -1,7 +1,7 @@
 package hudson.plugins.cppncss;
 
-import hudson.model.AbstractBuild;
 import hudson.model.HealthReportingAction;
+import hudson.model.Run;
 import hudson.plugins.cppncss.parser.StatisticSummary;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.cppncss.parser.StatisticsTotalResult;
@@ -21,7 +21,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Stephen Connolly
  * @since 09-Jan-2008 21:19:37
  */
-public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends AbstractBuildAction<T> implements HealthReportingAction {
+public abstract class AbstractBuildReport<T extends Run<?, ?>> extends AbstractBuildAction<T> implements HealthReportingAction {
     private final StatisticsResult results;
     private final StatisticsTotalResult totals;
 	private final Integer functionCcnViolationThreshold;
@@ -58,7 +58,7 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
      */
     @Override
     public StatisticSummary getStatisticSummary() {
-        AbstractBuild<?, ?> prevBuild = getBuild().getPreviousBuild();
+        Run<?, ?> prevBuild = getBuild().getPreviousBuild();
         while (prevBuild != null && prevBuild.getAction(getClass()) == null) {
             prevBuild = prevBuild.getPreviousBuild();
         }
@@ -125,7 +125,7 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
      * @return Value for property 'graphAvailable'.
      */
     public boolean isGraphActive() {
-        AbstractBuild<?, ?> build = getBuild();
+        Run<?, ?> build = getBuild();
         // in order to have a graph, we must have at least two points.
         int numPoints = 0;
         while (numPoints < 2) {

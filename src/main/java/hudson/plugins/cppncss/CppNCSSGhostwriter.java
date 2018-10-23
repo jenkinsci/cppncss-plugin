@@ -2,11 +2,11 @@ package hudson.plugins.cppncss;
 
 import hudson.AbortException;
 import hudson.FilePath;
-import hudson.model.AbstractBuild;
 import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.HealthReport;
 import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.cppncss.parser.Statistic;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.helpers.BuildProxy;
@@ -46,7 +46,8 @@ public class CppNCSSGhostwriter
         this.targets = targets;
     }
 
-    public boolean performFromMaster(AbstractBuild<?, ?> build, FilePath executionRoot, BuildListener listener)
+    @Override
+    public boolean performFromMaster(Run<?, ?> build, FilePath executionRoot, TaskListener listener)
             throws InterruptedException, IOException {
     	if (targets != null && targets.length > 0) {
 	    	List<Action> actions = build.getActions();
@@ -73,11 +74,13 @@ public class CppNCSSGhostwriter
         return true;
     }
 
-    public boolean performFromSlave(BuildProxy build, BuildListener listener) throws InterruptedException, IOException {
+    @Override
+    public boolean performFromSlave(BuildProxy build, TaskListener listener) throws InterruptedException, IOException {
         FilePath[] paths = build.getExecutionRootDir().list(reportFilenamePattern);
         StatisticsResult results = null;
         Set<String> parsedFiles = new HashSet<String>();
         for (FilePath path : paths) {
+            listener.getLogger().println("Parsing CppNCSS report file \"" + path.getName() + "\"");
             final String pathStr = path.getRemote();
             if (!parsedFiles.contains(pathStr)) {
                 parsedFiles.add(pathStr);

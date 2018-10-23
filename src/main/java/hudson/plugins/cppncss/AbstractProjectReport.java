@@ -1,8 +1,8 @@
 package hudson.plugins.cppncss;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
+import hudson.model.Run;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.cppncss.parser.StatisticsTotalResult;
 import hudson.plugins.helpers.AbstractProjectAction;
@@ -21,7 +21,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Stephen Connolly
  * @since 09-Jan-2008 21:22:45
  */
-public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> extends AbstractProjectAction<T>
+public abstract class AbstractProjectReport<T extends Job<?, ?>> extends AbstractProjectAction<T>
         implements ProminentProjectAction {
 
     public AbstractProjectReport(T project, Integer functionCcnViolationThreshold, Integer functionNcssViolationThreshold) {
@@ -32,7 +32,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
      * {@inheritDoc}
      */
     public String getIconFileName() {
-        for (AbstractBuild<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
+        for (Run<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
             final AbstractBuildReport action = build.getAction(getBuildActionClass());
             if (action != null) {
                 return PluginImpl.ICON_FILE_NAME;
@@ -45,7 +45,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
      * {@inheritDoc}
      */
     public String getDisplayName() {
-        for (AbstractBuild<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
+        for (Run<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
             final AbstractBuildReport action = build.getAction(getBuildActionClass());
             if (action != null) {
                 return PluginImpl.DISPLAY_NAME;
@@ -67,7 +67,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
      * {@inheritDoc}
      */
     public String getUrlName() {
-        for (AbstractBuild<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
+        for (Run<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
             final AbstractBuildReport action = build.getAction(getBuildActionClass());
             if (action != null) {
                 return PluginImpl.URL;
@@ -92,7 +92,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
             return;
         }
 
-        final AbstractBuild<?, ?> lastBuild = getProject().getLastBuild();
+        final Run<?, ?> lastBuild = getProject().getLastBuild();
         if (lastBuild == null) { // No sense to build graph if there is no builds, right?
             return;
         }
@@ -112,7 +112,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
      * @return Value for property 'graphAvailable'.
      */
     public boolean isGraphActive() {
-        AbstractBuild<?, ?> build = getProject().getLastBuild();
+        Run<?, ?> build = getProject().getLastBuild();
         // in order to have a graph, we must have at least two points.
         int numPoints = 0;
         while (numPoints < 2) {
@@ -133,7 +133,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
      * @return Value for property 'graphAvailable'.
      */
     public StatisticsResult getResults() {
-        for (AbstractBuild<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
+        for (Run<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
             final AbstractBuildReport action = build.getAction(getBuildActionClass());
             if (action != null) {
                 return action.getResults();
@@ -148,7 +148,7 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>> ext
      * @return Value for property 'graphAvailable'.
      */
     public StatisticsTotalResult getTotals() {
-        for (AbstractBuild<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
+        for (Run<?, ?> build = getProject().getLastBuild(); build != null; build = build.getPreviousBuild()) {
             final AbstractBuildReport action = build.getAction(getBuildActionClass());
             if (action != null) {
                 return action.getTotals();
