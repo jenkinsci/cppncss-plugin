@@ -5,8 +5,12 @@ import hudson.model.HealthReport;
 import hudson.model.Run;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 
+import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * TODO javadoc.
@@ -15,7 +19,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * @since 08-Jan-2008 21:15:05
  */
 public class CppNCSSBuildIndividualReport extends
-		AbstractBuildReport<Run<?, ?>> implements Action {
+		AbstractBuildReport<Run<?, ?>> implements Action, SimpleBuildStep.LastBuildAction {
 
 	private HealthReport healthReport;
 
@@ -68,5 +72,13 @@ public class CppNCSSBuildIndividualReport extends
 		} else {
 			return this;
 		}
+	}
+
+	@Override
+	public Collection<? extends Action> getProjectActions() {
+		return Collections.singleton(
+				new CppNCSSProjectIndividualReport(getBuild().getParent(),
+						getFunctionCcnViolationThreshold(),
+						getFunctionNcssViolationThreshold()));
 	}
 }

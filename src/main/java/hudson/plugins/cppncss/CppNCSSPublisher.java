@@ -6,11 +6,9 @@ import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-
 import hudson.plugins.helpers.BuildProxy;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.plugins.helpers.health.HealthMetric;
@@ -20,9 +18,6 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import jenkins.tasks.SimpleBuildStep;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.apache.commons.beanutils.ConvertUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -67,34 +62,17 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         return targets;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean needsToRunAfterFinalized() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new CppNCSSProjectIndividualReport(project, functionCcnViolationThreshold, functionNcssViolationThreshold);
-    }
-
+    @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
 
-    protected Ghostwriter newGhostwriter() {
+    private Ghostwriter newGhostwriter() {
         return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, targets);
     }
 
     @Override
     public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
-        CppNCSSProjectIndividualReport report = new CppNCSSProjectIndividualReport(run.getParent(), functionCcnViolationThreshold, functionNcssViolationThreshold);
-        ActionGetter getter = new ActionGetter();
-        getter.addProjectAction(report);
-        run.addAction(getter);
         try {
             BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
         } catch (IOException | InterruptedException e) {
@@ -103,13 +81,13 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         }
     }
 
- 
     @Extension @Symbol("cppncss")
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getDisplayName() {
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }
@@ -125,41 +103,6 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         public HealthMetric[] getMetrics() {
             return CppNCSSHealthMetrics.values();
         }
-    }
-    
-    /** This isn't actually an action itself, but only a way to get 
-     * project actions through {@link ActionGetter#getProjectActions}. Therefore all the 
-     * methods implemented from {@link Action} return null.
-     *
-     */
-    protected static class ActionGetter implements SimpleBuildStep.LastBuildAction {
-
-        private Collection<Action> projectActions = new ArrayList<Action>();
-
-        @Override
-        public String getIconFileName() {
-            return null;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return null;
-        }
-
-        @Override
-        public String getUrlName() {
-            return null;
-        }
-
-        @Override
-        public Collection<? extends Action> getProjectActions() {
-            return projectActions;
-        }
-
-        public void addProjectAction(Action action) {
-            projectActions.add(action);
-        }
-
     }
 
 }
