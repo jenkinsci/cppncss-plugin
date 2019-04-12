@@ -12,6 +12,13 @@
     <version>1.3-SNAPSHOT</version>
     <name>Jenkins CppNCSS plugin</name>
     <url>https://wiki.jenkins.io/display/JENKINS/CPPNCSS+Plugin</url>
+    <licenses>
+    <license>
+      <name>The MIT license</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
     <properties>
       <jenkins.version>1.651.3</jenkins.version>
